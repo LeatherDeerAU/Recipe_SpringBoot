@@ -1,27 +1,31 @@
 package com.example.demohyper;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 
 
 @RestController
-public class TaskController {
-    Recipe recipe = new Recipe();
+class TaskController {
+    private final List<Recipe> recipes = new ArrayList<>();
+    int id = 1;
 
-    @PostMapping("/api/recipe")
-    public String addRecipe(@RequestBody Recipe recipe) {
-        this.recipe = recipe;
-        return "recipe added";
+    @PostMapping("/api/recipe/new")
+    public Map addRecipe(@RequestBody Recipe recipe) {
+        recipes.add(recipe);
+        return Collections.singletonMap("id:", id++);
     }
 
-    @GetMapping("api/recipe")
-    public Recipe getRecipe() {
-        return this.recipe;
+    @GetMapping("api/recipe/{id}")
+    public Recipe getRecipe(@PathVariable int id) {
+        return recipes.get(id - 1);
     }
 }
 
@@ -32,6 +36,8 @@ public class TaskController {
 class Recipe {
     String name;
     String description;
-    String ingredients;
-    String directions;
+    String[] ingredients;
+    String[] directions;
 }
+
+
