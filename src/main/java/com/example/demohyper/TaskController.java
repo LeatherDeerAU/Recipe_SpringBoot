@@ -4,7 +4,10 @@ package com.example.demohyper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,8 +28,12 @@ class TaskController {
 
     @GetMapping("api/recipe/{id}")
     public Recipe getRecipe(@PathVariable int id) {
+        if (id > recipes.size() || id < 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
         return recipes.get(id - 1);
     }
+
 }
 
 
