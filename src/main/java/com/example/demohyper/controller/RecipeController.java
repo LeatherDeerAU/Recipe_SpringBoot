@@ -13,12 +13,10 @@ import java.util.*;
 
 
 @RestController
-class TaskController {
-    private final List<Recipe> recipes = new ArrayList<>();
-
+class RecipeController {
     private final RecipeService recipeService;
 
-    public TaskController(RecipeService recipeService) {
+    public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
 
