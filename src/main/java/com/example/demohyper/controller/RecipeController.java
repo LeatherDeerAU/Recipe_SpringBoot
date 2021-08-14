@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 
+import javax.validation.Valid;
 import java.util.*;
 
 
@@ -21,9 +22,9 @@ class RecipeController {
     }
 
     @PostMapping("/api/recipe/new")
-    public Map addRecipe(@RequestBody Recipe recipe) {
+    public Map addRecipe(@Valid @RequestBody Recipe recipe) {
         Recipe saved = recipeService.save(recipe);
-        return Collections.singletonMap("id:", saved.getId());
+        return Collections.singletonMap("id", saved.getId());
     }
 
     @GetMapping("api/recipe/{id}")
@@ -45,6 +46,28 @@ class RecipeController {
         } else {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PutMapping("api/recipe/{id}")
+    public ResponseEntity updateRecipe(@PathVariable int id, @Valid @RequestBody Recipe newRecipe) {
+        Optional<Recipe> optionalRecipe = Optional.ofNullable(recipeService.findRecipeByID(id));
+        if (optionalRecipe.isPresent()) {
+            newRecipe.setId(id);
+            recipeService.save(newRecipe);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(value = "api/recipe/search/", params = "category")
+    public ResponseEntity<List<Recipe>> getRecipesByCategory(@RequestParam String category) {
+        return ResponseEntity.ok().body(recipeService.findAllByCategory(category));
+    }
+
+    @GetMapping(value = "api/recipe/search/", params = "name")
+    public ResponseEntity<List<Recipe>> getRecipesNameContaining(@RequestParam String name) {
+        return ResponseEntity.ok().body(recipeService.findAllByNameContaining(name));
     }
 }
 
